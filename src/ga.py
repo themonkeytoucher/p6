@@ -7,7 +7,13 @@ import random
 import shutil
 import time
 import math
+from inspect import currentframe, getframeinfo
 
+#for testing 
+"""
+print("------------------------------ TEST ON LINE ", getframeinfo(currentframe()).lineno," ------------------------------")
+print(
+"""
 width = 200
 height = 16
 
@@ -52,8 +58,7 @@ class Individual_Grid(object):
             linearity=-0.5,
             solvability=2.0
         )
-        self._fitness = sum(map(lambda m: coefficients[m] * measurements[m],
-                                coefficients))
+        self._fitness = sum(map(lambda m: coefficients[m] * measurements[m], coefficients))
         return self
 
     # Return the cached fitness value or calculate it as needed.
@@ -70,9 +75,11 @@ class Individual_Grid(object):
 
         left = 1
         right = width - 1
-        for y in range(height):
+        for y in range(height-2):
             for x in range(left, right):
-                pass
+                chance_of_mutation = random.randint(0,100)
+                if chance_of_mutation > 94: #5% chance of a mutation occurring
+                    genome[y][x] = options[chance_of_mutation % 9] #if a mutation occurs then it randomly chooses a trait from options
         return genome
 
     # Create zero or more children from self and other
@@ -82,12 +89,19 @@ class Individual_Grid(object):
         # do crossover with other
         left = 1
         right = width - 1
-        for y in range(height):
-            for x in range(left, right):
+
+        #Goes through every single gene and merges the genome of self and other into a new genome
+        for y in range(height): #looping through the x-axis
+            for x in range(left, right): #looping through the y-axis (looping through rows)
                 # STUDENT Which one should you take?  Self, or other?  Why?
                 # STUDENT consider putting more constraints on this to prevent pipes in the air, etc
-                pass
+                if(random.randint(0,100)<50): #50% chance of switching genes
+                    new_genome[y][x] = other.genome[y][x]
+
         # do mutation; note we're returning a one-element tuple here
+        if(random.randint(0,100) < 5): #5% mutation rate
+            new_genome = self.mutate(new_genome)
+
         return (Individual_Grid(new_genome),)
 
     # Turn the genome into a level string (easy for this genome)
@@ -137,9 +151,134 @@ def clip(lo, val, hi):
         return hi
     return val
 
+Individual = Individual_Grid
+
+"""
+Input: population
+Output: returns the successors of the population
+"""
+def generate_successors(population):
+    results = []
+    # STUDENT Design and implement this
+    # Hint: Call generate_children() on some individuals and fill up results.
+    sorted_fit_pop_list = sorted(population, key=lambda p: p.fitness(), reverse = True)
+    challengers = []
+    total_fitness_avg = 0
+
+    for i in population:
+        total_fitness_avg += i.fitness()
+    if total_fitness_avg < 0:
+        total_fitness_avg *= -1
+    
+    #use roulette selection to select individuals who will participate in the tournament selection
+    #roulette selection
+    while len(challengers) < 200: #at least 200 participants
+        for ind in population:
+            if ind.fitness() <= random.randint(0, int(total_fitness_avg)): #simulating percent of individual fitness over total fitness
+                challengers.append(ind) #choosing the challengers
+
+    #tournament selection to find who will be mating
+    while len(results) < 480:
+        best_male = None
+        best_female = None
+        #finding participants for tournament
+        for i in range(50): #30 participants in the tournament
+            participant = challengers[random.randint(0, len(challengers)-1)] #find a random challenger
+            if best_male == None or best_male.fitness() > participant.fitness():
+                best_male = participant
+
+        for i in range(50): #30 participants in the tournament
+            participant = challengers[random.randint(0, len(challengers)-1)] #find a random challenger
+            if best_female == None or best_female.fitness() > participant.fitness():
+                best_female = participant
+
+        results.append(best_male.generate_children(best_female)[0])
+    
+    return results
+
+
+def ga():
+    # STUDENT Feel free to play with this parameter
+    pop_limit = 480
+    # Code to parallelize some computations
+    batches = os.cpu_count()
+    if pop_limit % batches != 0:
+        print("It's ideal if pop_limit divides evenly into " + str(batches) + " batches.")
+    batch_size = int(math.ceil(pop_limit / batches))
+    with mpool.Pool(processes=os.cpu_count()) as pool:
+        init_time = time.time()
+        # STUDENT (Optional) change population initialization
+        population = [Individual.random_individual() if random.random() < 0.9
+                      else Individual.empty_individual()
+                      for _g in range(pop_limit)]
+        # But leave this line alone; we have to reassign to population because we get a new population that has more cached stuff in it.
+        population = pool.map(Individual.calculate_fitness,
+                              population,
+                              batch_size)
+        init_done = time.time()
+        print("Created and calculated initial population statistics in:", init_done - init_time, "seconds")
+        generation = 0
+        start = time.time()
+        now = start
+        print("Use ctrl-c to terminate this loop manually.")
+        try:
+            while True:
+                now = time.time()
+                # Print out statistics
+                if generation > 0:
+                    best = max(population, key=Individual.fitness)
+                    print("Generation:", str(generation))
+                    print("Max fitness:", str(best.fitness()))
+                    print("Average generation time:", (now - start) / generation)
+                    print("Net time:", now - start)
+                    with open("levels/last.txt", 'w') as f:
+                        for row in best.to_level():
+                            f.write("".join(row) + "\n")
+                generation += 1
+                # STUDENT Determine stopping condition
+                stop_condition = False
+                if stop_condition:
+                    break
+                # STUDENT Also consider using FI-2POP as in the Sorenson & Pasquier paper
+                gentime = time.time()
+                print("------------------------------ TEST ON LINE ", getframeinfo(currentframe()).lineno," ------------------------------")
+                print("You can terminate loop now")
+                next_population = generate_successors(population)
+                print("------------------------------ TEST ON LINE ", getframeinfo(currentframe()).lineno," ------------------------------")
+                print("DO NOT TERMINATE LOOP")
+                gendone = time.time()
+                print("Generated successors in:", gendone - gentime, "seconds")
+                # Calculate fitness in batches in parallel
+                next_population = pool.map(Individual.calculate_fitness,
+                                           next_population,
+                                           batch_size)
+                popdone = time.time()
+                print("Calculated fitnesses in:", popdone - gendone, "seconds")
+                population = next_population
+        except KeyboardInterrupt:
+            print("------------------------------ TEST ON LINE ", getframeinfo(currentframe()).lineno," ------------------------------")
+            print("We have exited the loop")
+            pass
+    return population
+
+
+if __name__ == "__main__":
+    final_gen = sorted(ga(), key=Individual.fitness, reverse=True)
+    best = final_gen[0]
+    print("Best fitness: " + str(best.fitness()))
+    now = time.strftime("%m_%d_%H_%M_%S")
+    # STUDENT You can change this if you want to blast out the whole generation, or ten random samples, or...
+    for k in range(0, 10):
+        print("------------------------------ TEST ON LINE ", getframeinfo(currentframe()).lineno," ------------------------------")
+        print("printing files")
+        with open("levels/" + now + "_" + str(k) + ".txt", 'w') as f:
+            for row in final_gen[k].to_level():
+                f.write("".join(row) + "\n")
+
 # Inspired by https://www.researchgate.net/profile/Philippe_Pasquier/publication/220867545_Towards_a_Generic_Framework_for_Automated_Video_Game_Level_Creation/links/0912f510ac2bed57d1000000.pdf
 
-
+"""
+originally at 157
 class Individual_DE(object):
     # Calculating the level isn't cheap either so we cache it too.
     __slots__ = ["genome", "_fitness", "_level"]
@@ -338,84 +477,4 @@ class Individual_DE(object):
             (random.randint(1, width - 2), "7_pipe", random.randint(2, height - 4))
         ]) for i in range(elt_count)]
         return Individual_DE(g)
-
-
-Individual = Individual_Grid
-
-
-def generate_successors(population):
-    results = []
-    # STUDENT Design and implement this
-    # Hint: Call generate_children() on some individuals and fill up results.
-    return results
-
-
-def ga():
-    # STUDENT Feel free to play with this parameter
-    pop_limit = 480
-    # Code to parallelize some computations
-    batches = os.cpu_count()
-    if pop_limit % batches != 0:
-        print("It's ideal if pop_limit divides evenly into " + str(batches) + " batches.")
-    batch_size = int(math.ceil(pop_limit / batches))
-    with mpool.Pool(processes=os.cpu_count()) as pool:
-        init_time = time.time()
-        # STUDENT (Optional) change population initialization
-        population = [Individual.random_individual() if random.random() < 0.9
-                      else Individual.empty_individual()
-                      for _g in range(pop_limit)]
-        # But leave this line alone; we have to reassign to population because we get a new population that has more cached stuff in it.
-        population = pool.map(Individual.calculate_fitness,
-                              population,
-                              batch_size)
-        init_done = time.time()
-        print("Created and calculated initial population statistics in:", init_done - init_time, "seconds")
-        generation = 0
-        start = time.time()
-        now = start
-        print("Use ctrl-c to terminate this loop manually.")
-        try:
-            while True:
-                now = time.time()
-                # Print out statistics
-                if generation > 0:
-                    best = max(population, key=Individual.fitness)
-                    print("Generation:", str(generation))
-                    print("Max fitness:", str(best.fitness()))
-                    print("Average generation time:", (now - start) / generation)
-                    print("Net time:", now - start)
-                    with open("levels/last.txt", 'w') as f:
-                        for row in best.to_level():
-                            f.write("".join(row) + "\n")
-                generation += 1
-                # STUDENT Determine stopping condition
-                stop_condition = False
-                if stop_condition:
-                    break
-                # STUDENT Also consider using FI-2POP as in the Sorenson & Pasquier paper
-                gentime = time.time()
-                next_population = generate_successors(population)
-                gendone = time.time()
-                print("Generated successors in:", gendone - gentime, "seconds")
-                # Calculate fitness in batches in parallel
-                next_population = pool.map(Individual.calculate_fitness,
-                                           next_population,
-                                           batch_size)
-                popdone = time.time()
-                print("Calculated fitnesses in:", popdone - gendone, "seconds")
-                population = next_population
-        except KeyboardInterrupt:
-            pass
-    return population
-
-
-if __name__ == "__main__":
-    final_gen = sorted(ga(), key=Individual.fitness, reverse=True)
-    best = final_gen[0]
-    print("Best fitness: " + str(best.fitness()))
-    now = time.strftime("%m_%d_%H_%M_%S")
-    # STUDENT You can change this if you want to blast out the whole generation, or ten random samples, or...
-    for k in range(0, 10):
-        with open("levels/" + now + "_" + str(k) + ".txt", 'w') as f:
-            for row in final_gen[k].to_level():
-                f.write("".join(row) + "\n")
+"""

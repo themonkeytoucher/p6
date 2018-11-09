@@ -2,7 +2,23 @@ import pathfinding
 import numpy as np
 import sys
 
-
+"""
+Input: levelStr
+Output: {
+        'length': maxX,
+        'negativeSpace': negativeSpace,
+        'pathPercentage': pathPercentage,
+        'emptyPercentage': emptyPercentage,
+        'decorationPercentage': decorationPercentage,
+        'leniency': leniency,
+        'meaningfulJumps': float(totalMeaningfulJumps) / float(pathcount),
+        'jumps': float(totalJumps) / float(pathcount),
+        'meaningfulJumpVariance': float(meaningfulJumpVariance) / float(pathcount),
+        'jumpVariance': float(jumpVariance) / float(pathcount),
+        'linearity': linearity,
+        'solvability': 1.0
+        }
+"""
 def metrics(levelStr):
     maxY = len(levelStr)
     maxX = len(levelStr[0])
