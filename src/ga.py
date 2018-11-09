@@ -56,7 +56,7 @@ class Individual_Grid(object):
             pathPercentage=0.5,
             emptyPercentage=0.6,
             linearity=-0.5,
-            solvability=2.0
+            solvability=5.0
         )
         self._fitness = sum(map(lambda m: coefficients[m] * measurements[m], coefficients))
         return self
@@ -68,6 +68,15 @@ class Individual_Grid(object):
         return self._fitness
 
     # Mutate a genome into a new genome.  Note that this is a _genome_, not an individual!
+    """
+    Constraints
+    Top of pipes should be on pipes.
+    No floating pipes so pipes should be on top of x
+    Bricks should not be on the first floor or the second
+    All empty spaces(-) should have at least a height of 2
+    Should have a majority empty space
+
+    """
     def mutate(self, genome):
         # STUDENT implement a mutation operator, also consider not mutating this individual
         # STUDENT also consider weighting the different tile types so it's not uniformly random
@@ -77,8 +86,8 @@ class Individual_Grid(object):
         right = width - 1
         for y in range(height-2):
             for x in range(left, right):
-                chance_of_mutation = random.randint(0,100)
-                if chance_of_mutation > 94: #5% chance of a mutation occurring
+                chance_of_mutation = random.randint(0,1000)
+                if chance_of_mutation > 9994: #0.5% chance of a mutation occurring
                     genome[y][x] = options[chance_of_mutation % 9] #if a mutation occurs then it randomly chooses a trait from options
         return genome
 
@@ -99,7 +108,7 @@ class Individual_Grid(object):
                     new_genome[y][x] = other.genome[y][x]
 
         # do mutation; note we're returning a one-element tuple here
-        if(random.randint(0,100) < 5): #5% mutation rate
+        if(random.randint(0,1000) < 5): #0.5% mutation rate
             new_genome = self.mutate(new_genome)
 
         return (Individual_Grid(new_genome),)
@@ -172,28 +181,39 @@ def generate_successors(population):
     
     #use roulette selection to select individuals who will participate in the tournament selection
     #roulette selection
-    while len(challengers) < 200: #at least 200 participants
-        for ind in population:
-            if ind.fitness() <= random.randint(0, int(total_fitness_avg)): #simulating percent of individual fitness over total fitness
-                challengers.append(ind) #choosing the challengers
+    """
+    while len(results) < len(population): 
+        best_male = []
+        best_female = []
+        while len(best_male) < 20 and len(best_female) < 20: #at least 50 in each list
+            for male in population:
+                if male.fitness() >= random.randint(0, int(total_fitness_avg)): #simulating percent of individual fitness over total fitness
+                    best_male.append(male)
+            for female in population:
+                if female.fitness() >= random.randint(0, int(total_fitness_avg)):
+                    best_female.append(female)
+        for f in best_female:
+            for m in best_male:
+                results.append(m.generate_children(f)[0])
 
+    """
     #tournament selection to find who will be mating
-    while len(results) < 480:
+    while len(results) < len(population):
         best_male = None
         best_female = None
         #finding participants for tournament
         for i in range(50): #30 participants in the tournament
-            participant = challengers[random.randint(0, len(challengers)-1)] #find a random challenger
+            participant = population[random.randint(0, len(population)-1)] #find a random challenger
             if best_male == None or best_male.fitness() > participant.fitness():
                 best_male = participant
 
         for i in range(50): #30 participants in the tournament
-            participant = challengers[random.randint(0, len(challengers)-1)] #find a random challenger
+            participant = population[random.randint(0, len(population)-1)] #find a random challenger
             if best_female == None or best_female.fitness() > participant.fitness():
                 best_female = participant
 
         results.append(best_male.generate_children(best_female)[0])
-    
+
     return results
 
 
