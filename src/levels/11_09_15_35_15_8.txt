@@ -1,0 +1,16 @@
+-------------------------M------------------------------------BBBBBBBXXXXXBBBBBBB------------------------oo-------------o------------------------------------------------------------------o--o---------
+----------------------------------o---------------------------------X-----------X---------------------BX--------------------------------------------M---------------X------------------??????-----------
+----------------------------------------------------------------------------X-----?----?------------X---o--------------BBB----------------------------------------Mo---------------X-----------XXXXXX-o-
+----------o---------------------------------------------------------o--------M-----------B-T----------T-----------M----------------------------------------------------o--XXXXXXXX-T-----M---T-----o-T--
+--------------------------------o------------------------------oM--------------------?-----|-o----o---|-----------???---M---X-------M-----------------------------------X---------T|--XB--X--|---XXXX|--
+----------------------------------------------T----------------------T--BBBB--------------T|-----X----|-????????-------T---XX----------------------------T-------?----MXX--X------||-XX-----X|---BXXX|X-
+----------------------------------------------|-----X----------------|---X----------X-X---||-----XX---|-----BXBBBM-X-T-|-XXXX----------------------------|------------XXXB-XX-----||XXX-----X|?------|X-
+----------------------------------------------|-----XX-------------M-|--XX---------XXXX-BB||B-X--XXX--|------XX---XX-|-|-XXXX----------------------------|--------T--XXXX-XXXT--T-||XXXT---XX|X-----X|Xv
+----------X----------------------------o------|-----XXX--------------|-XXX------?-XXXXX---||T-XX-XXXX-|-----TXXX-XXX-|X|XXXXT------X---------------------|------?-|-XXXXXXXXX|XX|X||XXX|---XX|XX---XX|Xf
+----------XX----------------------------------|-----XXXX-------------|XXXX----X--XXXXXX---|||-XXXXXXXX|T-M--|XXXXXXX-|X|XXXX|------XX--------------------|--------|XXXXXXXXXX|XX|X||XXX|---XX|XXX-XXX|Xf
+----------XXX----------------T-------X--------|-----XXXXX----XXXXX---|XXXX----XXXXXXXXX-BB|||XXXXXTXXX||----|XXXXXXXX|X|XXXX|X----MXXX-------------------|--------|XXXXXXXXXX|XX|X||XXX|X--TX|XXXXXXX|Xf
+----------XXXX---------------|--T----XX-------|-----XXXXXX----------X|XXXX----XXXXXXXXX-XX|||XXXTX|XXX||X--X|XXXXXXXX|X|XXXT|XX----XXXX--X---------------|-------X|XXXXXXXXXX|XX|X||XTX|XX-|X|XXXXXXX|Xf
+----------XXXXX--------------|BB|BBB-XXX------|--X-?XXXXXXX---X----XX|XXXX-BB-XXXXXTXXX--X|||XXX|X|XXX||XXXX|XXXXXTXX|X|XXX||XXXT--XXXXXXX---------------|------XX|XXXXXXXXXX|XX|X||X|X|XXX|X|XXXXXXX|Tf
+----------XXXXXX-------------|-T|o---XXXX--M--|XXXX-XXXXXXXX-XX---XXX|XXXX---XXXXXX|XXX-XX|||XXX|X|XXX||XXXX|XXXXX|XX|X|XXX||XXX|--XXXXXXX---------------|-----XXX|XXXTXXXXXX|XX|X||X|X|XXX|X|XXXXXXX||f
+m---------XXXXXXX--E----EE---|-||E---XXXXX-BE-|--XXXXXXXXXXXXXX--XXXX|XXXX-EXXXXXXX|XXXXXX|||XXX|X|XXX||XXXX|XXXXX|XX|X|XXX||XXX|XEXXXXXXX-------------E-|----XXXX|XXX|XXXXXX|XX|X||X|X|XXX|X|XXXXXXX||X
+XXXXXXXXXXXXXXXXXX--XBBXXXXXX|X||XXXXXXXXXXXXX|XXXXXXXXXXXXXXXX-XXXXX|XXXX-XXXXXXXX|XXXXXX|||XXX|X|XXX||XXXX|XXXXX|XX|X|XXX||XXX|XXXXXXXXXXoXXXXXXXXXXXX-|--XXXXXX|XXX|XXXXXX|XX|X||X|X|XXX|X|XXXXXXX||X
